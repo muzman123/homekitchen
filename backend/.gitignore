@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.env
+.env
+.env.*
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# Editor & IDE configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database files (if any)
+*.sqlite3
+*.db
+
+# Compiled files
+*.so
+
+# PyInstaller
+*.spec
+dist/
+build/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# MySQL dump files
+*.sql
+*.dump
+
+# Test/coverage
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# FastAPI specific
+instance/

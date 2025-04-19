@@ -3,6 +3,7 @@ from deps import user_dependancy, owner_dependancy
 from db import execute_query
 from pydantic import BaseModel
 from typing import Optional
+from utils.userRole import get_user_role
 
 router = APIRouter(
     prefix='/homekitchens',
@@ -36,6 +37,8 @@ def make_homekitchen( create_kitchen_request: HomeKitchenCreate ,user: user_depe
         raise HTTPException(status_code=400, detail="Owner not found")
 
     owner_uid = owner_uid_result[0][0]
+    if get_user_role(owner_uid) != 'owner':
+        raise HTTPException(status_code=401, detail="Not an owner")
 
         # Insert into HOMEKITCHENS table
     insert_query = """

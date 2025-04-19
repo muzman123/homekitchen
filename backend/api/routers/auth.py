@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 from deps import bcrypt_context
 from db import execute_query
+from utils.userRole import get_user_role
 
 
 load_dotenv()
@@ -33,19 +34,20 @@ class UserCreateRequest(BaseModel):
     PhoneNo: str
     Password: str
     Role: str  # "customer", "driver", or "owner"
+    Address:str
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-# get the users role: 
-def get_user_role(userID: int):
-    if execute_query("SELECT * FROM KITCHENOWNERS WHERE OwnerUID = %s", (userID,), fetch=True):
-        return "owner"
-    if execute_query("SELECT * FROM DRIVERS WHERE DriverUID = %s", (userID,), fetch=True):
-        return "driver"
-    if execute_query("SELECT * FROM CUSTOMERS WHERE CustomerUID = %s", (userID,), fetch=True):
-        return "customer"
+# # get the users role: 
+# def get_user_role(userID: int):
+#     if execute_query("SELECT * FROM KITCHENOWNERS WHERE OwnerUID = %s", (userID,), fetch=True):
+#         return "owner"
+#     if execute_query("SELECT * FROM DRIVERS WHERE DriverUID = %s", (userID,), fetch=True):
+#         return "driver"
+#     if execute_query("SELECT * FROM CUSTOMERS WHERE CustomerUID = %s", (userID,), fetch=True):
+        # return "customer"
 
 def authenticate_user(email: str, password: str):
     #this is our query to run
@@ -112,6 +114,10 @@ async def create_user(create_user_request: UserCreateRequest):
 
     if role == 'customer':
         execute_query("INSERT INTO CUSTOMERS (CustomerUID) VALUES (%s)", (user_id,))
+        execute_query(
+            "INSERT INTO CUSTOMERADDRESSES (CustomerUID, Address) VALUES (%s, %s)",
+            (user_id, create_user_request.Address)
+        )
     elif role == 'driver':
         execute_query("INSERT INTO DRIVERS (DriverUID) VALUES (%s)", (user_id,))
     elif role == 'owner':

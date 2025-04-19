@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, testRoute, get_homeKitchen
+from routers import homekitchen
+from routers import auth, testRoute, me
 
 app = FastAPI()
 
@@ -21,7 +22,8 @@ def health_check():
 
 app.include_router(auth.router)
 app.include_router(testRoute.router)
-app.include_router(get_homeKitchen.router)
+app.include_router(homekitchen.router)
+app.include_router(me.router)
 
 # all restaurants 
 # dishes from restaurants 

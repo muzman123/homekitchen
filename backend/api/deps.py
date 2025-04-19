@@ -40,12 +40,13 @@ async def get_current_user(token: oauth2_bearer_dependancy):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get('sub')
+        role: str = payload.get('role')
         # user_id: int = payload.get('id')
 
-        if email is None:
+        if email is None or role is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user - 0')
-        # return {'email': email, 'id': user_id}
-        return {'email': email}
+        return {'email': email, 'role': role}
+    
     except JWTError:
         raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user - 1')
     
@@ -54,3 +55,21 @@ async def get_current_user(token: oauth2_bearer_dependancy):
 # what depends(get_current_user) does is run get_current_user everytime. 
 # when get current user is run we either get a token that authenticates the user or otherwise it returns unauth error
 user_dependancy = Annotated[dict, Depends(get_current_user)]
+
+def only_owner(token: oauth2_bearer_dependancy):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        role: str = payload.get('role')
+
+        if role is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user role')
+        
+        if role is not 'owner':
+            return False
+        
+        return True
+    
+    except JWTError:
+        raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user role')
+    
+owner_dependancy = Annotated[dict, Depends(only_owner)]

@@ -34,6 +34,15 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+# get the users role: 
+def get_user_role(userID: int):
+    if execute_query("SELECT * FROM KITCHENOWNERS WHERE OwnerUID = %s", (userID,), fetch=True):
+        return "owner"
+    if execute_query("SELECT * FROM DRIVERS WHERE DriverUID = %s", (userID,), fetch=True):
+        return "driver"
+    if execute_query("SELECT * FROM CUSTOMERS WHERE CustomerUID = %s", (userID,), fetch=True):
+        return "customer"
+
 def authenticate_user(email: str, password: str):
     #this is our query to run
     query = "SELECT * FROM USERS WHERE email = %s"
@@ -51,17 +60,19 @@ def authenticate_user(email: str, password: str):
     if not bcrypt_context.verify(password, hashed_password):
         return False
 
-    # Return user info if authentication is successful
-    return {
+    user = {
         'uid': user[0][0],
         'full_name': user[0][1] + user[0][2],
         'email': user[0][3],
-        'phone_no': user[0][4]
+        'phone_no': user[0][4],
+        'role' :  get_user_role(user[0][0])
     }
+    # Return user info if authentication is successful
+    return user
 
 # This will create our jwt token for auth
-def create_access_token(email:str , expires_delta:timedelta):
-    encode = {'sub': email}
+def create_access_token(email:str, role:str , expires_delta:timedelta):
+    encode = {'sub': email, 'role': role}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     #make a jwt token encoding for our email and exp using our secret key on the algorithm
@@ -90,7 +101,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate user - 2")
-    token = create_access_token( user['email'] , timedelta(minutes=20))
+    token = create_access_token( user['email'] , user['role'] ,timedelta(minutes=20))
 
     # the token type bearer is what helps us to check if the jwt token is correct
     return {'access_token': token, 'token_type': 'bearer'}

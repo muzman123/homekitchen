@@ -88,7 +88,7 @@ def get_mealplans_for_kitchen(kitchen_id: int, user: user_dependancy):
 
 
 @router.get('/{kitchen_id}/menuitems', status_code=status.HTTP_200_OK, summary="Get menu items")
-def get_mealplans_for_kitchen(kitchen_id: int, user: user_dependancy):
+def get_menu_items_for_kitchen(kitchen_id: int, user: user_dependancy):
     """Get menu items of a specific kitchen
 
     """

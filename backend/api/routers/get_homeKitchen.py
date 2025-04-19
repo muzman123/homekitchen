@@ -57,7 +57,12 @@ def make_homekitchen( create_kitchen_request: HomeKitchenCreate ,user: user_depe
 
     return {"message": "HomeKitchen created successfully"}
 
+@router.get('/{kitchen_id}/mealplans', status_code=status.HTTP_200_OK)
+def get_mealplans_for_kitchen(kitchen_id: int, user: user_dependancy):
+    query = "SELECT * FROM MEALPLANS WHERE KitchenID = %s"
+    mealplans = execute_query(query, (kitchen_id,), fetch=True)
 
+    if not mealplans:
+        raise HTTPException(status_code=404, detail="No meal plans found for this kitchen")
 
-
-    
+    return mealplans

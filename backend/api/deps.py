@@ -61,15 +61,13 @@ def only_owner(token: oauth2_bearer_dependancy):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         role: str = payload.get('role')
 
-        if role is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user role')
-        
-        if role is not 'owner':
-            return False
-        
-        return True
-    
+        if role is None or role != 'owner':
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only home kitchen owners can access this route')
+
+        return {'role': role}
+
     except JWTError:
-        raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user role')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
+
     
 owner_dependancy = Annotated[dict, Depends(only_owner)]

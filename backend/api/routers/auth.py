@@ -27,8 +27,12 @@ ALGORITHM = os.getenv("AUTH_ALGORITHM")
 # When we create a user , our create user request should follow this format
 # I may have to modify this to work for our app as our user create probs has hella more shit
 class UserCreateRequest(BaseModel):
-    email:str
-    password:str
+    FirstName: str
+    LastName: str
+    Email: str
+    PhoneNo: str
+    Password: str
+    Role: str  # "customer", "driver", or "owner"
 
 class Token(BaseModel):
     access_token: str
@@ -80,19 +84,43 @@ def create_access_token(email:str, role:str , expires_delta:timedelta):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(create_user_request: UserCreateRequest):
-    check_query = "SELECT * FROM USERS WHERE email= %s"
-    existing_user = execute_query(check_query, (create_user_request.email,), fetch=True)
+    check_query = "SELECT * FROM USERS WHERE Email = %s"
+    existing_user = execute_query(check_query, (create_user_request.Email,), fetch=True)
 
     if existing_user:
         raise HTTPException(status_code=400, detail='User already exists')
 
-    # create user request here makes sure that password is as we want it
-    hashed_pw = bcrypt_context.hash(create_user_request.password)
+    hashed_pw = bcrypt_context.hash(create_user_request.Password)
 
-    insert_query = "INSERT INTO USERS (email, HashedPassword) VALUES (%s,%s)"
-    execute_query(insert_query, (create_user_request.email, hashed_pw))
+    insert_query = """
+        INSERT INTO USERS (FirstName, LastName, Email, PhoneNo, HashedPassword)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    execute_query(insert_query, (
+        create_user_request.FirstName,
+        create_user_request.LastName,
+        create_user_request.Email,
+        create_user_request.PhoneNo,
+        hashed_pw
+    ))
+    
+    get_uid_query = "SELECT UID FROM USERS WHERE Email = %s"
+    user_id = execute_query(get_uid_query, (create_user_request.Email,), fetch=True)[0][0]
 
+    # Based on role, insert into respective table
+    role = create_user_request.Role.lower()
+
+    if role == 'customer':
+        execute_query("INSERT INTO CUSTOMERS (CustomerUID) VALUES (%s)", (user_id,))
+    elif role == 'driver':
+        execute_query("INSERT INTO DRIVERS (DriverUID) VALUES (%s)", (user_id,))
+    elif role == 'owner':
+        execute_query("INSERT INTO KITCHENOWNERS (OwnerUID) VALUES (%s)", (user_id,))
+    else:
+        raise HTTPException(status_code=400, detail='Invalid role specified')
+    
     return {'Message': "user creation success"}
+
 
 # tells us our response will be of Type token we have defined
 @router.post('/token', response_model=Token)

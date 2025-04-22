@@ -47,6 +47,20 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-black p-6">
+      <button
+           onClick={() => router.push("/feed")}
+           title="Back to Feed"
+           className="
+             text-2xl 
+             p-2 rounded 
+             hover:bg-gray-200 
+             active:bg-gray-300 
+             transition 
+            duration-150
+            "
+         >
+           ←
+        </button>
       <div className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
         <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
         {cart.length === 0 ? (

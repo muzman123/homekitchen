@@ -1,3 +1,4 @@
+// src/app/RestaurantFeed/page.js
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,6 +10,7 @@ export default function RestaurantFeed() {
   const [kitchens, setKitchens] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -80,10 +82,19 @@ export default function RestaurantFeed() {
   if (loading) return <div className="p-8 text-center">Loading feed…</div>;
   if (error)   return <div className="p-8 text-red-500 text-center">{error}</div>;
 
-  // Filter kitchens for owner
+  // Filter kitchens for owner vs customer
   const displayed = user.role === "owner"
     ? kitchens.filter(k => k.ownerUID === user.uid)
     : kitchens;
+
+  // Apply search filter
+  const filtered = displayed.filter(k => {
+    const term = searchTerm.trim().toLowerCase();
+    return (
+      k.name.toLowerCase().includes(term) ||
+      k.address.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,17 +113,19 @@ export default function RestaurantFeed() {
           <div className="flex-1 max-w-lg mx-4">
             <input
               type="text"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
               placeholder="Search kitchens..."
               className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           {/* Right controls */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ">
             {user.role === "customer" && (
               <button
                 onClick={() => router.push("/cart")}
-                className="relative text-2xl"
+                className="relative text-2xl hover:scale-110 hover:ring-2 hover:ring-green-500 hover:ring-offset-1"
                 title="View Cart"
               >
                 🛒
@@ -128,9 +141,9 @@ export default function RestaurantFeed() {
             )}
             {localStorage.getItem("access_token") ? (
               <img
-                src="/avatar-placeholder.png"
+                src="/images/avatar.png"
                 alt="Account"
-                className="w-8 h-8 rounded-full cursor-pointer"
+                className="w-8 h-8 rounded-full cursor-pointer hover:scale-110 hover:ring-2 hover:ring-green-500 hover:ring-offset-1"
                 onClick={() => router.push("/account")}
               />
             ) : (
@@ -158,15 +171,15 @@ export default function RestaurantFeed() {
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
           {user.role === "owner" ? "Your Kitchens" : "Browse Home Kitchens"}
         </h1>
-        {displayed.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="text-center text-gray-600">
             {user.role === "owner"
               ? "You have no kitchens yet. Click “Create Kitchen” above to add one."
-              : "No kitchens available."}
+              : "No kitchens match your search."}
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayed.map(k => (
+            {filtered.map(k => (
               <div
                 key={k.id}
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer"
@@ -181,7 +194,7 @@ export default function RestaurantFeed() {
                         )}`
                   }
                   alt={k.name}
-                  className="w-full h-36 object-cover"
+                  className="w-full h-36 object-cover "
                 />
                 <div className="px-4 py-3">
                   <h3 className="text-lg font-medium text-gray-800">{k.name}</h3>

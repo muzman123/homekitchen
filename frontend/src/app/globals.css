@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  button {
+    @apply transition-transform duration-200 ease-in-out
+           hover:scale-105 hover:bg-green-700 hover:text-white;
+  }
+}

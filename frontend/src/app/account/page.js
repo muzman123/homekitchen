@@ -42,6 +42,20 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 text-green-500">
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+      <button
+           onClick={() => router.push("/feed")}
+           title="Back to Feed"
+           className="
+             text-2xl 
+             p-2 rounded 
+             hover:bg-gray-200 
+             active:bg-gray-300 
+             transition 
+            duration-150
+            "
+         >
+           ←
+         </button>
         <div className="px-6 py-4">
           <h1 className="text-2xl font-bold mb-2">
             {user.FirstName} {user.LastName}

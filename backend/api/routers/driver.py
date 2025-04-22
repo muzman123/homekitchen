@@ -5,14 +5,30 @@ from db import execute_query
 router = APIRouter(prefix="/driver", tags=["driver"])
 
 # ------------------- Get Pending Orders -------------------
-@router.get("/orders/pending", status_code=status.HTTP_200_OK)
-def get_pending_orders(user: user_dependancy):
-    if user['role'] != 'driver':
+@router.get("/orders", status_code=status.HTTP_200_OK)
+def get_orders(status: str, user: user_dependancy):
+    if user["role"] != "driver":
         raise HTTPException(status_code=403, detail="Only drivers can view this route")
 
-    query = "SELECT * FROM ORDERS WHERE Status = 'Pending'"
-    orders = execute_query(query, fetch=True)
-    return orders
+    if status not in ["Pending", "Claimed", "Completed"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+
+    query = "SELECT OrderID, TotalPrice, CustomerUID, KitchenID, DriverUID, ETA, Status FROM ORDERS WHERE Status = %s"
+    orders = execute_query(query, (status,), fetch=True)
+
+    return [
+        {
+            "OrderID": row[0],
+            "TotalPrice": row[1],
+            "CustomerUID": row[2],
+            "KitchenID": row[3],
+            "DriverUID": row[4],
+            "ETA": row[5],
+            "Status": row[6],
+        }
+        for row in orders
+    ]
+
 
 # ------------------- Claim an Order -------------------
 @router.post("/orders/{order_id}/claim", status_code=status.HTTP_200_OK)

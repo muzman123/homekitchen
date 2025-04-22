@@ -2,6 +2,8 @@ from db import execute_query
 
 # get the users role: 
 def get_user_role(userID: int):
+    if execute_query("SELECT * FROM ADMINS WHERE AdminUID = %s", (userID,), fetch=True):
+        return "admin"
     if execute_query("SELECT * FROM KITCHENOWNERS WHERE OwnerUID = %s", (userID,), fetch=True):
         return "owner"
     if execute_query("SELECT * FROM DRIVERS WHERE DriverUID = %s", (userID,), fetch=True):

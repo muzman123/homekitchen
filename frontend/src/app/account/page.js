@@ -40,7 +40,7 @@ export default function AccountPage() {
   if (!user)  return null; // redirecting…
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 text-green-500">
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
         <div className="px-6 py-4">
           <h1 className="text-2xl font-bold mb-2">
@@ -76,7 +76,7 @@ export default function AccountPage() {
                       className="text-gray-600 hover:text-green-600 cursor-pointer"
                       onClick={() => router.push(`/restaurants/${k[0]}`)}
                     >
-                      {k[1] /* assuming column 1 is kitchen name */}
+                      {k[2] /* assuming column 1 is kitchen name */}
                     </li>
                   ))}
                 </ul>

@@ -41,7 +41,7 @@ def place_order(order: OrderRequest, user: user_dependancy):
 
     # Insert items into ORDERCONTAINS
     for item in order.Items:
-        execute_query("INSERT INTO ORDERCONTAINS (OrderID, KitchenID, ItemID) VALUES (%s, %s, %s)", (order_id, item.KitchenID, item.ItemID))
+        execute_query("INSERT INTO ORDERCONTAINS (OrderID, KitchenID, ItemID) VALUES (%s, %s, %s)", (order_id, order.KitchenID, item.ItemID))
 
     return {"message": "Order placed successfully", "OrderID": order_id}
 

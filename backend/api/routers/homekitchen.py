@@ -12,13 +12,15 @@ router = APIRouter(
 )
 
 # ------------------- Models -------------------
+class MealPlanItem(BaseModel):
+    ItemID: int
+
 class MealPlanCreate(BaseModel):
     Name: str
     TotalPrice: float
     Image: str
+    Items: List[MealPlanItem]
 
-class MealPlanItem(BaseModel):
-    ItemID: int
 class MenuItemCreate(BaseModel):
     Name: str
     Description: str

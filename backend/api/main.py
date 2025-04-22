@@ -3,10 +3,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import homekitchen
 from routers import auth, testRoute, me, driver, order, admin
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,

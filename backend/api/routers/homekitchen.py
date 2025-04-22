@@ -178,3 +178,26 @@ def delete_menu_item(kitchen_id: int, item_id: int, user: user_dependancy):
     execute_query(query, (item_id, kitchen_id))
     return {"message": "Menu item deleted"}
 
+# -------------- Get pending orders -------------
+@router.get("/pending", status_code=status.HTTP_200_OK)
+def get_pending_orders_for_owner(user: user_dependancy):
+    if user['role'] != 'owner':
+        raise HTTPException(status_code=403, detail="Only kitchen owners can view this route")
+
+    # Get UID
+    owner_uid = user['uid']
+
+    # Get KitchenID for this owner
+    kitchen_query = "SELECT KitchenID FROM HOMEKITCHENS WHERE OwnerUID = %s"
+    kitchen_result = execute_query(kitchen_query, (owner_uid,), fetch=True)
+
+    if not kitchen_result:
+        raise HTTPException(status_code=404, detail="No kitchen found for this owner")
+
+    kitchen_id = kitchen_result[0][0]
+
+    # Fetch pending orders
+    orders_query = "SELECT * FROM ORDERS WHERE KitchenID = %s AND Status = 'Pending'"
+    pending_orders = execute_query(orders_query, (kitchen_id,), fetch=True)
+
+    return pending_orders or {"message": "No pending orders for your kitchen"}

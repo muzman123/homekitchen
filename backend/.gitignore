@@ -54,3 +54,6 @@ htmlcov/
 
 # FastAPI specific
 instance/
+
+
+uploads/

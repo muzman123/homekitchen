@@ -5,8 +5,8 @@ export default function Landing() {
           <header className="flex justify-between items-center px-6 py-4 shadow-md">
             <h1 className="text-2xl font-bold">HomeKitchen</h1>
             <nav className="space-x-4">
-              <a href="#" className="hover:text-green-600">Login</a>
-              <a href="#" className="hover:text-green-600">Sign Up</a>
+              <a href="/login" className="hover:text-green-600">Login</a>
+              <a href="/signup" className="hover:text-green-600">Sign Up</a>
             </nav>
           </header>
           

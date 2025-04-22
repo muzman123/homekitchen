@@ -134,7 +134,7 @@ export default function Signup() {
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded"
+                className="flex-1 px-3 py-2 border rounded text-gray-500"
                 required
               />
               <input
@@ -142,7 +142,7 @@ export default function Signup() {
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded"
+                className="flex-1 px-3 py-2 border rounded text-gray-500"
                 required
               />
             </div>
@@ -154,7 +154,7 @@ export default function Signup() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded"
+                className="flex-1 px-3 py-2 border rounded text-gray-500"
                 required
               />
               <input
@@ -162,7 +162,7 @@ export default function Signup() {
                 placeholder="Phone No."
                 value={phoneNo}
                 onChange={(e) => setPhoneNo(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded"
+                className="flex-1 px-3 py-2 border rounded text-gray-500"
                 required
               />
             </div>
@@ -174,7 +174,7 @@ export default function Signup() {
                 placeholder="Address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded text-gray-500"
                 required
               />
             )}
@@ -185,7 +185,7 @@ export default function Signup() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded text-gray-500"
               required
             />
 
@@ -195,7 +195,7 @@ export default function Signup() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirm(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded text-gray-500"
               required
             />
 

@@ -57,7 +57,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className="w-full max-w-md bg-white p-8 shadow-md rounded">
-        <h2 className="text-2xl font-bold text-center mb-6">Log In</h2>
+        <h2 className="text-2xl text-black font-bold text-center mb-6">Log In</h2>
 
         {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
 
@@ -74,8 +74,7 @@ export default function Login() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded text-gray-500"
               required
             />
           </div>
@@ -92,8 +91,7 @@ export default function Login() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded text-gray-500"
               required
             />
           </div>
@@ -107,7 +105,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-4 text-center text-sm text-gray-500">
           New here?{" "}
           <button
             onClick={() => router.push("/signup")}

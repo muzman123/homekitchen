@@ -84,8 +84,9 @@ export default function RestaurantFeed() {
 
   // Filter kitchens for owner vs customer
   const displayed = user.role === "owner"
-    ? kitchens.filter(k => k.ownerUID === user.uid)
-    : kitchens;
+     // owners see all of their kitchens
+     ? kitchens.filter(k => k.ownerUID === user.uid)
+     : kitchens;
 
   // Apply search filter
   const filtered = displayed.filter(k => {
@@ -203,9 +204,11 @@ export default function RestaurantFeed() {
                     <span className="font-semibold text-green-600">
                       {k.averageRating?.toFixed(1) ?? "—"}
                     </span>
-                    <span className="ml-1 text-gray-500 capitalize">
-                      {k.approvalStatus || "—"}
-                    </span>
+                    {user.role === "owner" && (
+                      <span className="ml-1 text-gray-500 capitalize">
+                        {k.approvalStatus || "—"}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

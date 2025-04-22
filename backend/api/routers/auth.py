@@ -77,8 +77,8 @@ def authenticate_user(email: str, password: str):
     return user
 
 # This will create our jwt token for auth
-def create_access_token(email:str, role:str , expires_delta:timedelta):
-    encode = {'sub': email, 'role': role}
+def create_access_token(email:str, role:str, uid:int , expires_delta:timedelta):
+    encode = {'sub': email, 'role': role, 'uid':uid}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     #make a jwt token encoding for our email and exp using our secret key on the algorithm
@@ -135,7 +135,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate user - 2")
-    token = create_access_token( user['email'] , user['role'] ,timedelta(minutes=20))
+    token = create_access_token( user['email'] , user['role'], user['uid'] ,timedelta(minutes=20))
 
     # the token type bearer is what helps us to check if the jwt token is correct
     return {'access_token': token, 'token_type': 'bearer'}

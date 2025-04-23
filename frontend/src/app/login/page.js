@@ -7,10 +7,10 @@ export default function Login() {
   const router = useRouter();
 
   // States for email, password, error message, and loading indicator
-  const [email, setEmail] = useState("");
+  const [email, setEmail]     = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+  const [loading, setLoading]   = useState(false);
 
   // Handle form submission to call the FastAPI /auth/token endpoint
   const handleSubmit = async (e) => {
@@ -19,11 +19,12 @@ export default function Login() {
     setError(null);
 
     try {
-      // Build URL‑encoded form data for OAuth2PasswordRequestForm
+      // Build URL-encoded form data for OAuth2PasswordRequestForm
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
 
+      // Authenticate and get JWT
       const response = await fetch(
         process.env.NEXT_PUBLIC_API_URL + "/auth/token",
         {
@@ -41,12 +42,23 @@ export default function Login() {
       }
 
       const data = await response.json();
-
-      // Save the JWT token
       localStorage.setItem("access_token", data.access_token);
 
-      // Redirect everyone to the feed
-      router.push("/feed");
+      //Fetch /me to get the user’s role
+      const meRes = await fetch(process.env.NEXT_PUBLIC_API_URL + "/me", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      if (!meRes.ok) throw new Error("Failed to fetch user info");
+      const meData = await meRes.json();
+      const role = meData.Role;
+
+      //Redirect based on role
+      if (role === "driver")       router.push("/driver");
+      else if (role === "admin")   router.push("/admin");
+      else                          router.push("/feed");
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -63,10 +75,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-gray-700 text-sm font-bold mb-1"
-            >
+            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-1">
               Email
             </label>
             <input
@@ -80,10 +89,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-gray-700 text-sm font-bold mb-1"
-            >
+            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-1">
               Password
             </label>
             <input

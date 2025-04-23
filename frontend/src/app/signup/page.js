@@ -82,7 +82,27 @@ export default function Signup() {
         const { access_token } = await loginRes.json();
         localStorage.setItem("access_token", access_token);
         router.push("/create-kitchen");
-      } else {
+      } else if(role == "driver") {
+        const formData = new URLSearchParams();
+        formData.append("username", email);
+        formData.append("password", password);
+
+        const loginRes = await fetch(`${API}/auth/token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString(),
+        });
+
+        if (!loginRes.ok) {
+          const errData = await loginRes.json();
+          throw new Error(errData.detail || "Auto-login failed.");
+        }
+
+        const { access_token } = await loginRes.json();
+        localStorage.setItem("access_token", access_token);
+        router.push("/driver");
+      }
+        else{
         // 3) Otherwise, send them to login
         router.push("/login");
       }
@@ -112,7 +132,7 @@ export default function Signup() {
                 ? "Customer"
                 : r === "owner"
                 ? "Restaurant Owner"
-                : "Driver"}
+                : "driver"}
             </button>
           ))}
         </div>
